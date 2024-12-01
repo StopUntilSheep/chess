@@ -1,14 +1,14 @@
 import { initialBoardState } from "../constants";
 
 const initialiseBoard = () => {
-    const width = 8;
-    const height = 8;
     const board = [];
-    for (let y = 0; y < height; y++) {
+    for (let y = 0; y < initialBoardState.length; y++) {
         const row = [];
-        for (let x = 0; x < width; x++) {
+        for (let x = 0; x < initialBoardState[0].length; x++) {
             (x + y) % 2
                 ? row.push({
+                      // NEXT JOB TO DO IS TO FLATTEN THE NODE OBJECTS BY GETTING RID OF 'square' AND 'piece'
+
                       square: {
                           x,
                           y,
@@ -19,10 +19,17 @@ const initialiseBoard = () => {
                       piece: {
                           type: initialBoardState[y][x]["piece"],
                           color: initialBoardState[y][x]["color"],
-                          hasMoved: false,
+                          //   hasMoved: false,
+                          // the stuff below here is for testing pawns that aren't starting on the 7th rank - uncomment line above when done testing
+                          hasMoved:
+                              initialBoardState[y][x]["piece"] === "" && y !== 6
+                                  ? true
+                                  : false,
                       },
                   })
                 : row.push({
+                      // NEXT JOB TO DO IS TO FLATTEN THE NODE OBJECTS BY GETTING RID OF 'square' AND 'piece'
+
                       square: {
                           x,
                           y,
@@ -33,7 +40,12 @@ const initialiseBoard = () => {
                       piece: {
                           type: initialBoardState[y][x]["piece"],
                           color: initialBoardState[y][x]["color"],
-                          hasMoved: false,
+                          //   hasMoved: false,
+                          // the stuff below here is for testing pawns that aren't starting on the 7th rank - uncomment line above when done testing
+                          hasMoved:
+                              initialBoardState[y][x]["piece"] === "" && y !== 6
+                                  ? true
+                                  : false,
                       },
                   });
         }
