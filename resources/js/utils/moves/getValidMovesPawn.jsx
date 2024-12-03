@@ -1,19 +1,21 @@
 import checkForPieceUp from "./checkForPieceUp";
 
-const findValidMovesPawn = (board, { y, x }) => {
+const getValidMovesPawn = (pieces, { y, x }) => {
     const validMoves = [];
 
     // [MOVING FORWARD]
     // check if square in front of pawn is occcupied
-    let result = checkForPieceUp(board, y, x, 1);
+    let result = checkForPieceUp(pieces, y, x, 1);
+
+    console.log(result);
 
     if (result.length) {
         // check if pawn has moved at all yet
-        if (board[y][x].piece.hasMoved) {
+        if (pieces[y][x].hasMoved) {
             validMoves.push(...result);
         } else {
             // check if square 2 squares in front of pawn is occupied
-            result = checkForPieceUp(board, y, x, 2);
+            result = checkForPieceUp(pieces, y, x, 2);
             validMoves.push(...result);
         }
     }
@@ -32,4 +34,4 @@ const findValidMovesPawn = (board, { y, x }) => {
     return validMoves;
 };
 
-export default findValidMovesPawn;
+export default getValidMovesPawn;

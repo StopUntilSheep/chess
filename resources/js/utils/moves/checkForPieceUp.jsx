@@ -1,10 +1,10 @@
-const checkForPieceUp = (board, y, x, count = null) => {
+const checkForPieceUp = (pieces, y, x, count = null) => {
     if (y === 0) return false;
     let iterations = 0;
     const emptySquares = [];
 
     for (let i = y - 1; i > -1; i--) {
-        if (board[i][x].piece.type !== null) {
+        if (pieces[i][x]) {
             return emptySquares;
         }
         emptySquares.push([i, x]);

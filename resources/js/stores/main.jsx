@@ -1,30 +1,29 @@
 import { create } from "zustand";
 import initialiseBoard from "../utils/initialiseBoard";
-import getActivePiece from "../utils/getActivePiece";
-import getValidMoves from "../utils/moves/getValidMoves";
-import findValidMoves from "../utils/moves/findValidMoves";
+import initialisePieces from "../utils/initialisePieces";
+import getValidMovesPawn from "../utils/moves/getValidMovesPawn";
 
 const useMainStore = create((set, get) => ({
     board: initialiseBoard(),
     setBoard: (nextBoard) => set({ board: nextBoard }),
-    setActivePiece: (node) => get().setBoard(getActivePiece(get().board, node)),
-    setValidMoves: (node) =>
-        get().setBoard(
-            getValidMoves(get().board, findValidMoves(get().board, node))
-        ),
+    pieces: initialisePieces(),
+    setPieces: (nextPieces) => set({ pieces: nextPieces }),
+    activePiece: null,
+    setActivePiece: (nextActivePiece) => set({ activePiece: nextActivePiece }),
+    clearActivePiece: () => set({ activePiece: null }),
+    validMoves: [],
+    setValidMoves: () => set({ validMoves: get().getValidMoves() }),
+    getValidMoves: () => {
+        if (get().activePiece.type === "")
+            return getValidMovesPawn(get().pieces, get().activePiece);
+        if (get().activePiece.type === "R") console.log("R");
+        if (get().activePiece.type === "N") console.log("N");
+        if (get().activePiece.type === "B") console.log("B");
+        if (get().activePiece.type === "Q") console.log("Q");
+        if (get().activePiece.type === "K") console.log("K");
+        return [];
+    },
+    clearValidMoves: () => set({ validMoves: [] }),
 }));
 
 export default useMainStore;
-
-// NEXT JOB:
-// Rather than having isActive as a key on board.node.piece, create activePiece in the store, so that we will be able to access the details of the selected piece (assuming activePiece !== null) immediately and from anywhere in the app
-
-// Do the same for validMoves? Resulting in...
-//  board: initialiseBoard(),
-//  setBoard: (nextBoard) => set({ board: nextBoard }),
-//  activePiece: null,
-//  setActivePiece: (node) => get().setBoard(getActivePiece(get().board, node)),
-//  validMoves: null,
-//  setValidMoves: (node) => get().setBoard(
-//      getValidMoves(get().board, findValidMoves(get().board, node))
-//  ),
