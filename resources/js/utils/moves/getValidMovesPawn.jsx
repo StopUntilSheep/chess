@@ -7,8 +7,6 @@ const getValidMovesPawn = (pieces, { y, x }) => {
     // check if square in front of pawn is occcupied
     let result = checkForPieceUp(pieces, y, x, 1);
 
-    console.log(result);
-
     if (result.length) {
         // check if pawn has moved at all yet
         if (pieces[y][x].hasMoved) {

@@ -1,50 +1,57 @@
 import React from "react";
 import Piece from "../Piece/Piece";
-import useMainStore from "../../stores/main";
+import useMainStore, {
+    useMainGetters,
+    useMainSetters,
+    useMainActions,
+} from "../../stores/main";
 import arrayExistsInArrayOfArrays from "../../utils/arrayExistsInArrayOfArrays";
 
 const Board = () => {
-    const board = useMainStore((state) => state.board);
-    const pieces = useMainStore((state) => state.pieces);
-    const activePiece = useMainStore((state) => state.activePiece);
-    const setActivePiece = useMainStore((state) => state.setActivePiece);
-    const clearActivePiece = useMainStore((state) => state.clearActivePiece);
-    const validMoves = useMainStore((state) => state.validMoves);
-    const setValidMoves = useMainStore((state) => state.setValidMoves);
-    const clearValidMoves = useMainStore((state) => state.clearValidMoves);
+    const { board, pieces, activePiece, validMoves } = useMainStore();
+    const { getTurnColor } = useMainGetters();
+    const { setActivePiece, clearActivePiece, setValidMoves, clearValidMoves } =
+        useMainSetters();
+    const { moveActivePiece, pushLatestMove, flipBoardAndPieces } =
+        useMainActions();
 
     const handleClickSquare = (y, x) => {
-        // TRY TO IMPLEMENT THE BELOW NEXT
-        // if (activePiece) {
-        //     moveActivePiece(y, x);
-        // }
+        if (activePiece && arrayExistsInArrayOfArrays([y, x], validMoves)) {
+            moveActivePiece(y, x);
+            pushLatestMove({ y, x, type: activePiece.type, isCapture: false });
+            setTimeout(flipBoardAndPieces, 200);
+            console.log(pieces);
+        }
 
         clearActivePiece();
         clearValidMoves();
     };
 
     const handleClickPiece = (y, x) => {
-        // TRY TO IMPLEMENT THE BELOW NEXT
-        // if (activePiece) {
-        //     moveActivePiece(y, x);
-        // }
-
-        setActivePiece(pieces[y][x]);
-        setValidMoves();
+        if (activePiece && arrayExistsInArrayOfArrays([y, x], validMoves)) {
+            moveActivePiece(y, x);
+            pushLatestMove({ y, x, type: activePiece.type, isCapture: true });
+            flipBoardAndPieces();
+        } else {
+            setActivePiece(pieces[y][x]);
+            setValidMoves();
+        }
     };
 
     return (
-        <div className="flex flex-col aspect-square max-h-screen text-white">
+        <div className="flex flex-col aspect-square max-h-screen">
             {board.map((row, y) => {
                 return (
                     <div className="flex flex-1 basis-0" key={`y-${y}`}>
                         {row.map((node, x) => {
                             return (
                                 <div
-                                    onClick={() => handleClickSquare(y, x)}
+                                    onClick={() =>
+                                        handleClickSquare(node.y, node.x)
+                                    }
                                     className={`relative flex flex-1 aspect-square cursor-pointer ${
-                                        activePiece?.y === y &&
-                                        activePiece?.x === x
+                                        activePiece?.y === node.y &&
+                                        activePiece?.x === node.x
                                             ? "bg-green-700"
                                             : node.bg === "black"
                                             ? "bg-board-black"
@@ -52,18 +59,21 @@ const Board = () => {
                                     }`}
                                     key={`x-${x}`}
                                 >
-                                    {pieces[y][x] && (
+                                    {pieces[node.y][node.x] && (
                                         <Piece
                                             action={(e) => {
                                                 e.stopPropagation();
-                                                handleClickPiece(y, x);
+                                                handleClickPiece(
+                                                    pieces[node.y][node.x].y,
+                                                    pieces[node.y][node.x].x
+                                                );
                                             }}
-                                            type={pieces[y][x].type}
-                                            color={pieces[y][x].color}
+                                            type={pieces[node.y][node.x].type}
+                                            color={pieces[node.y][node.x].color}
                                         />
                                     )}
                                     {arrayExistsInArrayOfArrays(
-                                        [y, x],
+                                        [node.y, node.x],
                                         validMoves
                                     ) && (
                                         <div className="rounded-full w-1/3 h-1/3 top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 absolute opacity-50 bg-black"></div>
